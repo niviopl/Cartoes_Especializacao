@@ -24,18 +24,17 @@ public class CartaoService {
         return clienteIterable;
     }
 
-
     public Cartao salvarCartao(Cartao cartao){
-        Optional<Cliente> clienteOptional = clienteRepository.findById(cartao.getIdCliente());
-        if (clienteOptional.isPresent()){
+        //Optional<Cliente> clienteOptional = clienteRepository.findById(cartao.getCliente());
+        //if (clienteOptional.isPresent()){
             Cartao cartaoObjeto = cartaoRepository.save(cartao);
             return cartaoObjeto;
-        }
-        throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Código de Cliente Inexistente!");
+        //}
+        //throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Código de Cliente Inexistente!");
     }
 
-    public Optional<Cartao> buscarPorId(int id){
-        Optional<Cartao> cartaoOptional = cartaoRepository.findById(id);
+    public Optional<Cartao> buscarPorId(long id){
+        Optional<Cartao> cartaoOptional = cartaoRepository.findById(Integer.valueOf((int) id));
         return cartaoOptional;
     };
 
@@ -60,22 +59,21 @@ public class CartaoService {
             if (cartao.getLimiteTotal() == 0.0){
                 cartao.setLimiteTotal(cartaoData.getLimiteTotal());
             }
-            if (cartao.getIdCliente() == 0){
-                cartao.setIdCliente(cartaoData.getIdCliente());
+            //if (cartao.getIdCliente() == 0){
+            //    cartao.setIdCliente(cartaoData.getIdCliente());
                 Cartao cartaoObjeto = cartaoRepository.save(cartao);
                 return cartaoObjeto;
-            }else{
-                Optional<Cliente> clienteOptional = clienteRepository.findById(cartao.getIdCliente());
-                if (clienteOptional.isPresent()){
-                    Cartao cartaoObjeto = cartaoRepository.save(cartao);
-                    return cartaoObjeto;
-                }
-                throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Novo Código de Cliente Inexistente!");
-            }
+            //}else{
+            //    Optional<Cliente> clienteOptional = clienteRepository.findById(cartao.getIdCliente());
+            //    if (clienteOptional.isPresent()){
+            //        Cartao cartaoObjeto = cartaoRepository.save(cartao);
+            //        return cartaoObjeto;
+            //    }
+            //    throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Novo Código de Cliente Inexistente!");
+            //}
         }
         throw new org.hibernate.ObjectNotFoundException(Cartao.class, "O Cartão não foi encontrado");
     }
-
 
     public void deletarCartao(Cartao cartao){
         cartaoRepository.delete(cartao);

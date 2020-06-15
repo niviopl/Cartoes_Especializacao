@@ -1,9 +1,6 @@
 package com.br.cartoes.cartoes.models;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -11,31 +8,42 @@ public class Cartao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
     private double limiteTotal;
     private Date validade;
     private int CVV;
     private double limiteAtual;
-    private int idCliente;
+    //private int idCliente;
+    @ManyToOne
+    private Cliente cliente;
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
 
     public Cartao() {
     }
 
-    public Cartao(int id, double limiteTotal, Date validade, int CVV, double limiteAtual, int idCliente) {
+    public Cartao(long id, double limiteTotal, Date validade, int CVV, double limiteAtual, Cliente cliente) {
         this.id = id;
         this.limiteTotal = limiteTotal;
         this.validade = validade;
         this.CVV = CVV;
         this.limiteAtual = limiteAtual;
-        this.idCliente = idCliente;
+        //this.idCliente = idCliente;
+        this.cliente = cliente;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setid(int numeroCartao) {
+    public void setid(long numeroCartao) {
         this.id = id;
     }
 
@@ -71,11 +79,11 @@ public class Cartao {
         this.limiteAtual = limiteAtual;
     }
 
-    public int getIdCliente() {
-        return idCliente;
-    }
+    //public int getIdCliente() {
+        //return idCliente;
+    //}
 
-    public void setIdCliente(int idCliente) {
-        this.idCliente = idCliente;
-    }
+    //public void setIdCliente(int idCliente) {
+        //this.idCliente = idCliente;
+    //}
 }
