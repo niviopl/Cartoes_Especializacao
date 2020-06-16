@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Lancamentos")
+@RequestMapping("/Lancamento")
 public class LancamentoController {
 
     @Autowired

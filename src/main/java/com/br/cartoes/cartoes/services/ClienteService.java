@@ -37,15 +37,6 @@ public class ClienteService {
             if (cliente.getNome()== null){
                 cliente.setNome(clienteData.getNome());
             }
-            if (cliente.getCpf()== null){
-                cliente.setCpf(clienteData.getCpf());
-            }
-            if (cliente.getDataNascimento()== null){
-                cliente.setDataNascimento(clienteData.getDataNascimento());
-            }
-            if (cliente.getEmail()== null){
-                cliente.setEmail(clienteData.getEmail());
-            }
             Cliente clienteObjeto = clienteRepository.save(cliente);
             return clienteObjeto;
        }

@@ -2,6 +2,7 @@ package com.br.cartoes.cartoes.controllers;
 
 import com.br.cartoes.cartoes.models.Cartao;
 import com.br.cartoes.cartoes.models.Cliente;
+import com.br.cartoes.cartoes.models.Dto.CartaoDto;
 import com.br.cartoes.cartoes.services.CartaoService;
 import com.br.cartoes.cartoes.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Cartoes")
+@RequestMapping("/Cartao")
 public class CartaoController {
 
     @Autowired
@@ -37,9 +38,9 @@ public class CartaoController {
     }
 
     @PostMapping
-    public ResponseEntity<Cartao> salvarCartao(@RequestBody @Valid Cartao cartao){
+    public ResponseEntity<Cartao> salvarCartao(@RequestBody @Valid CartaoDto cartaoDto){
        try {
-            Cartao cartaoObjeto = cartaoService.salvarCartao(cartao);
+            Cartao cartaoObjeto = cartaoService.salvarCartao(cartaoDto);
             return ResponseEntity.status(201).body(cartaoObjeto);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
@@ -48,9 +49,21 @@ public class CartaoController {
 
     @PutMapping("/{id}")
     public Cartao atualizarCartao(@PathVariable Integer id, @RequestBody Cartao cartao){
-        cartao.setid(id);
+        cartao.setId(id);
         try {
             Cartao cartaoObjeto = cartaoService.atualizarCartao(cartao);
+            return cartaoObjeto;
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
+        }
+    }
+
+    @PatchMapping("/{num}")
+    public Cartao atualizarStatusCartao(@PathVariable double num,  @RequestBody Cartao cartao){
+        cartao.setNumero(num);
+        //System.out.println("NumDocartao: " + num);
+        try {
+            Cartao cartaoObjeto = cartaoService.atualizarStatusCartao(cartao);
             return cartaoObjeto;
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
