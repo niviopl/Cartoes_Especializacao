@@ -20,31 +20,65 @@ public class CartaoService {
     private CartaoRepository cartaoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ClienteService clienteService;
 
-    public Iterable<Cliente> buscarTodosClientes(List<Integer> clientesId){
-        Iterable<Cliente> clienteIterable = clienteRepository.findAllById(clientesId);
-        return clienteIterable;
+    //public Iterable<Cliente> buscarTodosClientes(List<Integer> clientesId){
+        //Iterable<Cliente> clienteIterable = clienteRepository.findAllById(clientesId);
+        //Iterable<Cliente> clienteIterable = clienteService.buscarPorId(clientesId);
+        //return clienteIterable;
+    //}
+
+    public Cartao salvarCartao(Cartao cartao)throws ObjectNotFoundException{
+        //if (clienteOptional.isPresent()){
+         //   Cartao cartao = new Cartao();
+         //   cartao.setTipoDeStatus(TipoDeStatus.FALSE);
+         //   cartao.setNumero(cartaoDto.getNumero());
+          //  cartao.setCliente(clienteOptional.get());
+         //   Cartao cartaoObjeto = cartaoRepository.save(cartao);
+         //   return cartaoObjeto;
+        //}
+        //throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Cliente Inexistente no Cadastro!");
+        // Bloco de validação
+        Cliente cliente = clienteService.buscarPorId(cartao.getCliente().getId());
+        cartao.setCliente(cliente);
+
+        Optional<Cartao> byNumero = cartaoRepository.findByNumero(cartao.getNumero());
+
+        if(byNumero.isPresent()) {
+            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Número de cartão já existe no Cadastro!");
+        }
+
+        // Regras de negócio
+        cartao.setTipoDeStatus(TipoDeStatus.FALSE);
+
+        return cartaoRepository.save(cartao);
+
     }
 
-    public Cartao salvarCartao(CartaoDto cartaoDto)throws ObjectNotFoundException{
-        //String branco = "";
-        Optional <Cliente> clienteOptional =  clienteRepository.findById(cartaoDto.getIdCliente());
-        if (clienteOptional.isPresent()){
-            Cartao cartao = new Cartao();
-            cartao.setTipoDeStatus(TipoDeStatus.FALSE);
-            cartao.setNumero(cartaoDto.getNumero());
-            cartao.setCliente(clienteOptional.get());
-            Cartao cartaoObjeto = cartaoRepository.save(cartao);
-            return cartaoObjeto;
+    public Cartao getById(int id) {
+        Optional<Cartao> byId = cartaoRepository.findById(id);
+
+        if(!byId.isPresent()) {
+            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "O Cartão não foi encontrado");
         }
-        throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Cliente Inexistente no Cadastro!");
+
+        return byId.get();
     }
 
     public Optional<Cartao> buscarPorId(long id){
         Optional<Cartao> cartaoOptional = cartaoRepository.findById(Integer.valueOf((int) id));
         return cartaoOptional;
     };
+
+    public Cartao getByNumero(String numero) {
+        Optional<Cartao> byId = cartaoRepository.findByNumero(numero);
+
+        if(!byId.isPresent()) {
+            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "O Cartão não foi encontrado");
+        }
+
+        return byId.get();
+    }
 
     public Iterable<Cartao> buscarTodosCartoes(){
         Iterable<Cartao> cartoes = cartaoRepository.findAll();
@@ -55,7 +89,7 @@ public class CartaoService {
         Optional<Cartao> cartaoOptional = buscarPorId(cartao.getId());
          if (cartaoOptional.isPresent()){
             Cartao cartaoData = cartaoOptional.get();
-            if (cartao.getNumero() == 0.0){
+            if (cartao.getNumero() == null){
                 cartao.setNumero(cartaoData.getNumero());
             }
 
@@ -68,6 +102,14 @@ public class CartaoService {
             return cartaoObjeto;
          }
         throw new org.hibernate.ObjectNotFoundException(Cartao.class, "O Cartão não foi encontrado");
+    }
+
+    public Cartao update(Cartao updatedCartao) {
+        Cartao databaseCartao = getByNumero(updatedCartao.getNumero());
+
+        databaseCartao.setTipoDeStatus(updatedCartao.getTipoDeStatus());
+
+        return cartaoRepository.save(databaseCartao);
     }
 
     public Cartao atualizarStatusCartao(Cartao cartao) throws ObjectNotFoundException{

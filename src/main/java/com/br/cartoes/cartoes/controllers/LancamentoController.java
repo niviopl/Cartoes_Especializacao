@@ -2,7 +2,10 @@ package com.br.cartoes.cartoes.controllers;
 
 
 import com.br.cartoes.cartoes.models.Cartao;
+import com.br.cartoes.cartoes.models.Dto.CreateLancamentoRequest;
+import com.br.cartoes.cartoes.models.Dto.LancamentoResponse;
 import com.br.cartoes.cartoes.models.Lancamento;
+import com.br.cartoes.cartoes.models.mapper.LancamentoMapper;
 import com.br.cartoes.cartoes.services.CartaoService;
 import com.br.cartoes.cartoes.services.LancamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/Lancamento")
 public class LancamentoController {
 
     @Autowired
@@ -25,28 +27,24 @@ public class LancamentoController {
     @Autowired
     private CartaoService cartaoService;
 
-    @GetMapping
+    @GetMapping("/lancamentos")
     public Iterable<Lancamento> buscarTodosLancamentos(){
         return lancamentoService.buscarTodosLancamentos();
     }
 
-    @GetMapping("/{id}")
-    public Lancamento buscarLancamento(@PathVariable Integer id){
-        Optional<Lancamento> lancamentoOptional = lancamentoService.buscarPorId(id);
-        if (lancamentoOptional.isPresent()){
-            return lancamentoOptional.get();
-        }else {
-            throw new ResponseStatusException((HttpStatus.NO_CONTENT));
-        }
-     }
+    @PostMapping("/lancamento")
+    public LancamentoResponse create(@RequestBody CreateLancamentoRequest createLancamentoRequest) {
+        Lancamento lancamento = LancamentoMapper.toLancamento(createLancamentoRequest);
 
-     @PostMapping
-    public ResponseEntity<Lancamento> salvarLancamento(@RequestBody @Valid Lancamento lancamento){
-         try {
-             Lancamento lancamentoObjeto = lancamentoService.salvarLancamento(lancamento);
-             return ResponseEntity.status(201).body(lancamentoObjeto);
-         }catch (Exception e){
-             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
-         }
-     }
+        lancamento = lancamentoService.create(lancamento);
+
+        return LancamentoMapper.toLancamentoResponse(lancamento);
+    }
+
+    @GetMapping("/lancamentos/{cartaoId}")
+    public List<LancamentoResponse> listByCartao(@PathVariable int cartaoId) {
+        List<Lancamento> lancamentos = lancamentoService.listByCartao(cartaoId);
+        return LancamentoMapper.toLancamentoResponse(lancamentos);
+    }
+
 }

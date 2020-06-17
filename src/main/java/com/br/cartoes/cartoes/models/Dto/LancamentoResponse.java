@@ -1,25 +1,17 @@
-package com.br.cartoes.cartoes.models;
+package com.br.cartoes.cartoes.models.Dto;
 
-import com.br.cartoes.cartoes.enums.TipoDeLancamento;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-import java.util.Date;
+public class LancamentoResponse {
 
-@Entity
-public class Lancamento {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    private Cartao cartao;
-
-    @Column
     private String descricao;
 
-    @Column
     private Double valor;
+
+    @JsonProperty("cartao_id")
+    private int cartaoId;
 
     public int getId() {
         return id;
@@ -27,14 +19,6 @@ public class Lancamento {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public Cartao getCartao() {
-        return cartao;
-    }
-
-    public void setCartao(Cartao cartao) {
-        this.cartao = cartao;
     }
 
     public String getDescricao() {
@@ -52,4 +36,13 @@ public class Lancamento {
     public void setValor(Double valor) {
         this.valor = valor;
     }
+
+    public int getCartaoId() {
+        return cartaoId;
+    }
+
+    public void setCartaoId(int cartaoId) {
+        this.cartaoId = cartaoId;
+    }
+
 }

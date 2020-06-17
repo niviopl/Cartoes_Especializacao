@@ -20,9 +20,12 @@ public class ClienteService {
         return clienteObjeto;
     }
 
-    public Optional<Cliente> buscarPorId(int id){
+    public Cliente buscarPorId(int id) throws ObjectNotFoundException{
         Optional<Cliente> clienteOptional = clienteRepository.findById(id);
-        return clienteOptional;
+        if(!clienteOptional.isPresent()) {
+            throw new ObjectNotFoundException(Cliente.class, "O Cliente não foi encontrado");
+        }
+        return clienteOptional.get();
     }
 
     public Iterable<Cliente> buscarTodosClientes(){
@@ -30,18 +33,18 @@ public class ClienteService {
         return clientes;
     }
 
-    public Cliente atualizarCliente(Cliente cliente) throws ObjectNotFoundException{
-        Optional<Cliente> clienteOptional = buscarPorId(cliente.getId());
-        if (clienteOptional.isPresent()){
-            Cliente clienteData = clienteOptional.get();
-            if (cliente.getNome()== null){
-                cliente.setNome(clienteData.getNome());
-            }
-            Cliente clienteObjeto = clienteRepository.save(cliente);
-            return clienteObjeto;
-       }
-        throw new ObjectNotFoundException(Cliente.class, "O Cliente não foi encontrado");
-    }
+    //public Cliente atualizarCliente(Cliente cliente) throws ObjectNotFoundException{
+     //   Optional<Cliente> clienteOptional = buscarPorId(cliente.getId());
+     //   if (clienteOptional.isPresent()){
+     //       Cliente clienteData = clienteOptional.get();
+     //       if (cliente.getNome()== null){
+      //          cliente.setNome(clienteData.getNome());
+      //      }
+      //      Cliente clienteObjeto = clienteRepository.save(cliente);
+      //      return clienteObjeto;
+      // }
+      //  throw new ObjectNotFoundException(Cliente.class, "O Cliente não foi encontrado");
+    //}
 
     public void deletarCliente(Cliente cliente){
         clienteRepository.delete(cliente);

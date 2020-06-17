@@ -2,6 +2,8 @@ package com.br.cartoes.cartoes.models;
 
 import javax.persistence.*;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -9,9 +11,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Cliente {
 
     @Id
-    //@Column(name = "numeroCartao")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @JsonProperty("name")
     private String nome;
 
 

@@ -2,19 +2,19 @@ package com.br.cartoes.cartoes.models.Dto;
 
 public class CartaoDto {
 
-    private double numero;
+    private String numero;
     private int idCliente;
 
-    public CartaoDto(double numero, int idCliente) {
+    public CartaoDto(String numero, int idCliente) {
         this.numero = numero;
         this.idCliente = idCliente;
     }
 
-    public double getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(double numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 

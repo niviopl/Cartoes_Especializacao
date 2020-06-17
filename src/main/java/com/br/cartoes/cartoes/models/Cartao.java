@@ -1,6 +1,7 @@
 package com.br.cartoes.cartoes.models;
 
 import com.br.cartoes.cartoes.enums.TipoDeStatus;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -11,19 +12,17 @@ public class Cartao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private double numero;
+    private String numero;
+
+    @JsonProperty("ativo")
     private TipoDeStatus tipoDeStatus;
 
     @ManyToOne
     private Cliente cliente;
 
-    public Cartao() {}
 
-    public Cartao(int id, double numero, String ativo, Cliente cliente) {
-        this.id = id;
-        this.numero = numero;
-        this.tipoDeStatus = tipoDeStatus;
-        this.cliente = cliente;
+    public Cartao() {
+
     }
 
     public int getId() {
@@ -34,11 +33,11 @@ public class Cartao {
         this.id = id;
     }
 
-    public double getNumero() {
+    public String getNumero() {
         return numero;
     }
 
-    public void setNumero(double numero) {
+    public void setNumero(String numero) {
         this.numero = numero;
     }
 

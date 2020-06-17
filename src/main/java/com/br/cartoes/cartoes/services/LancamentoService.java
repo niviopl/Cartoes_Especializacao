@@ -8,10 +8,13 @@ import com.br.cartoes.cartoes.models.Lancamento;
 import com.br.cartoes.cartoes.repositories.CartaoRepository;
 import com.br.cartoes.cartoes.repositories.LancamentoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.stereotype.Service;
 
+import javax.management.Query;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Filter;
 
 @Service
 public class LancamentoService {
@@ -20,39 +23,28 @@ public class LancamentoService {
     private LancamentoRepository lancamentoRepository;
 
     @Autowired
-    private CartaoRepository cartaoRepository;
+    private CartaoService cartaoService;
 
-    public Lancamento salvarLancamento(Lancamento lancamento){
-        if (lancamento.getValor() == 0){
-            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Lançamento não pode ser Zerado!");
-        }
-
-        if (lancamento.getIdCartao() == 0){
-            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "ID Cartão não pode ser Zerado!");
-        }
-
-        if (lancamento.getDescricao() == null){
-            throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Descrição não pode estar em Branco!");
-        }
-
-        Optional<Cartao> cartaoOptional =  cartaoRepository.findById(lancamento.getIdCartao());
-
-        if (cartaoOptional.isPresent()){
-            Cartao cartaoData = cartaoOptional.get();
-            if (cartaoData.getTipoDeStatus() == TipoDeStatus.FALSE){
-                    throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Cartão Não está Ativo!");
-            }else{
-                    Cartao cartaoObjeto = cartaoRepository.save(cartaoData);
-                    Lancamento lancamentoObjeto = lancamentoRepository.save(lancamento);
-                    return lancamentoObjeto;
-            }
-         }
-        throw new org.hibernate.ObjectNotFoundException(Cartao.class, "Cartão Inexistente no Cadastro!");
+    public List<Lancamento> listByCartao(int cartaoId) {
+        return lancamentoRepository.findAllByCartao_id (cartaoId);
     }
+
+    public Lancamento create(Lancamento lancamento) {
+        Cartao cartao = cartaoService.getById(lancamento.getCartao().getId());
+        lancamento.setCartao(cartao);
+        return lancamentoRepository.save(lancamento);
+    }
+
 
     public Optional<Lancamento> buscarPorId(int id) {
         Optional <Lancamento> lancamentoOptional =lancamentoRepository.findById(id);
         return lancamentoOptional;
+    }
+
+    public Iterable<Lancamento> buscarIdCartao(int id){
+        Iterable<Lancamento> lancamentos = lancamentoRepository.findAll();
+        //Iterable<Lancamento> LancamentoFiltrado = ;
+        return lancamentos;
     }
 
     public Iterable<Lancamento> buscarTodosLancamentos(){

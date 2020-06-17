@@ -2,7 +2,8 @@ package com.br.cartoes.cartoes.controllers;
 
 import com.br.cartoes.cartoes.models.Cartao;
 import com.br.cartoes.cartoes.models.Cliente;
-import com.br.cartoes.cartoes.models.Dto.CartaoDto;
+import com.br.cartoes.cartoes.models.Dto.*;
+import com.br.cartoes.cartoes.models.mapper.CartaoMapper;
 import com.br.cartoes.cartoes.services.CartaoService;
 import com.br.cartoes.cartoes.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,24 +28,26 @@ public class CartaoController {
         return cartaoService.buscarTodosCartoes();
     }
 
-    @GetMapping("/{id}")
-    public Cartao buscarCartao(@PathVariable Integer id){
-        Optional<Cartao> cartaoOptional = cartaoService.buscarPorId(id);
-        if (cartaoOptional.isPresent()){
-            return cartaoOptional.get();
-        } else{
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-        }
+    @GetMapping("/{numero}")
+    public GetCartaoResponse buscarCartao(@PathVariable String numero){
+        Cartao byNumero = cartaoService.getByNumero(numero);
+        return CartaoMapper.toGetResponse(byNumero);
     }
 
     @PostMapping
-    public ResponseEntity<Cartao> salvarCartao(@RequestBody @Valid CartaoDto cartaoDto){
+    public CreateCartaoResponse salvarCartao(@RequestBody CreateCartaoRequest createCartaoRequest){
        try {
-            Cartao cartaoObjeto = cartaoService.salvarCartao(cartaoDto);
-            return ResponseEntity.status(201).body(cartaoObjeto);
-        }catch (Exception e){
+       //     Cartao cartaoObjeto = cartaoService.salvarCartao(cartaoDto);
+           Cartao cartao = CartaoMapper.fromCreateRequest(createCartaoRequest);
+
+           cartao = cartaoService.salvarCartao(cartao);
+
+           return CartaoMapper.toCreateResponse(cartao);
+             //return ResponseEntity.status(201).body(cartaoObjeto);
+
+       }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
-        }
+       }
     }
 
     @PutMapping("/{id}")
@@ -58,16 +61,13 @@ public class CartaoController {
         }
     }
 
-    @PatchMapping("/{num}")
-    public Cartao atualizarStatusCartao(@PathVariable double num,  @RequestBody Cartao cartao){
-        cartao.setNumero(num);
-        //System.out.println("NumDocartao: " + num);
-        try {
-            Cartao cartaoObjeto = cartaoService.atualizarStatusCartao(cartao);
-            return cartaoObjeto;
-        }catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
-        }
+    @PatchMapping("/{numero}")
+    public UpdateCartaoResponse atualizarStatusCartao(@PathVariable String numero,  @RequestBody UpdateCartaoRequest updateCartaoRequest){
+        Cartao cartao = CartaoMapper.fromUpdateRequest(updateCartaoRequest);
+        cartao.setNumero(numero);
+
+        cartao = cartaoService.update(cartao);
+        return CartaoMapper.toUpdateResponse(cartao);
     }
 
     @DeleteMapping("/{id}")
